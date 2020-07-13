@@ -1,18 +1,33 @@
 from django.shortcuts import render, HttpResponse
+from Home.models import Contact
+from datetime import datetime
+from django.contrib import messages
 
 # Create your views here.
 def index(request):
     context = {
         "variable" : "this is sent"
     }
+    messages.success(request, 'this is a test msg')
     return render(request, 'index.html', context)
     #return HttpResponse("This is Homepage")
 
 def about(request):
-    return HttpResponse("This is About Page")
+    return render(request, 'about.html')
+    #return HttpResponse("This is About Page")
 
 def services(request):
-    return HttpResponse("This is a service Page")
+    return render(request, 'services.html')
+    #return HttpResponse("This is a service Page")
     
 def contact(request):
-    return HttpResponse("This is a contact Page")
+    if request.method == f"POST":
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        desc = request.POST.get('desc')
+        contact = Contact(name = name, email = email, phone = phone, desc = desc, date = datetime.today())
+        contact.save()
+        messages.success(request, 'Your message has been sent!')
+    return render(request, 'contact.html')
+    #return HttpResponse("This is a contact Page")
